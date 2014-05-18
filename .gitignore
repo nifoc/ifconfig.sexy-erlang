@@ -2,9 +2,10 @@
 .eunit/
 .rebar/
 deps/
-doc/*
+doc/
 ebin/
 logs/
+_rel/
 erl_crash.dump
 *.analysis
 *.beam

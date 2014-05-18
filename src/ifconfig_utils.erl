@@ -45,9 +45,13 @@ static_dir(Mod) ->
 
 -spec peer_ip(cowboy_req:req()) -> {binary(), cowboy_req:req()}.
 peer_ip(Req) ->
-  {{Ip, _Port}, Req2} = cowboy_req:peer(Req),
-  Ip2 = unicode:characters_to_binary(inet_parse:ntoa(Ip)),
-  {Ip2, Req2}.
+  case cowboy_req:header(<<"x-real-ip">>, Req, undefined) of
+    {Ip, _Req2}=R when is_binary(Ip) -> R;
+    {undefined, Req2} ->
+      {{Ip, _Port}, Req3} = cowboy_req:peer(Req2),
+      Ip2 = unicode:characters_to_binary(inet_parse:ntoa(Ip)),
+      {Ip2, Req3}
+  end.
 
 -spec format(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()} | {{error, term()}, cowboy_req:req()}.
 format(Field, Value, Req) ->

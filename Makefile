@@ -77,7 +77,7 @@ doc:
 	@rm -rf ./doc/*.html ./doc/edoc-info ./doc/erlang.png ./doc/stylesheet.css
 	@./rebar doc skip_deps=true
 
-release:
+release: compile
 	@relx
 
 .PHONY: all compile eunit ct xref test dialyzer clean allclean distclean doc release

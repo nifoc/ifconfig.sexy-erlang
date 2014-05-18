@@ -23,6 +23,7 @@ request(Req) ->
   case filename:extension(Path) of
     <<".txt">> -> rewrite_content_type(Path, <<"text/plain">>, Req2);
     <<".json">> -> rewrite_content_type(Path, <<"application/json">>, Req2);
+    <<".jsonp">> -> rewrite_content_type(Path, <<"application/javascript">>, Req2);
     <<".xml">> -> rewrite_content_type(Path, <<"application/xml">>, Req2);
     <<".yaml">> -> rewrite_content_type(Path, <<"application/x-yaml">>, Req2);
     <<".edn">> -> rewrite_content_type(Path, <<"application/edn">>, Req2);

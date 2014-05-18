@@ -60,6 +60,7 @@ format(Field, Value, Req) ->
     {<<"text/html", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"application/xhtml+xml", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"application/json", _Rest/binary>>, Req2} -> format_json(Field, Value, Req2);
+    {<<"application/javascript", _Rest/binary>>, Req2} -> format_jsonp(Field, Value, Req2);
     {<<"application/xml", _Rest/binary>>, Req2} -> format_xml(Field, Value, Req2);
     {<<"application/x-yaml", _Rest/binary>>, Req2} -> format_yaml(Field, Value, Req2);
     {<<"application/edn", _Rest/binary>>, Req2} -> format_edn(Field, Value, Req2);
@@ -77,6 +78,12 @@ format_txt(Value, Req) ->
 format_json(Field, Value, Req) ->
   Body = <<"{\"", Field/binary, "\":\"", Value/binary, "\"}">>,
   {ok, [{<<"content-type">>, <<"application/json; charset=utf-8">>}], Body, Req}.
+
+-spec format_jsonp(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
+format_jsonp(Field, Value, Req) ->
+  {Fn, Req2} = cowboy_req:qs_val(<<"callback">>, Req, <<"ifconfig">>),
+  Body = <<Fn/binary, "({\"", Field/binary, "\":\"", Value/binary, "\"});">>,
+  {ok, [{<<"content-type">>, <<"application/javascript; charset=utf-8">>}], Body, Req2}.
 
 -spec format_xml(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_xml(Field, Value, Req) ->

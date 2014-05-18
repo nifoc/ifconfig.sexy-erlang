@@ -1,0 +1,15 @@
+{application, ifconfig, [
+  {description, "Simple HTTP API for returning data (e.g. IP) about the accessing client."},
+  {vsn, "0.1"},
+  {modules, []},
+  {registered, [
+    ifconfig_sup
+  ]},
+  {applications, [
+    kernel,
+    stdlib,
+    cowboy
+  ]},
+  {mod, {ifconfig_app, []}},
+  {env, []}
+]}.

@@ -21,24 +21,24 @@
 request(Req) ->
   {Path, Req2} = cowboy_req:path(Req),
   case filename:extension(Path) of
-    <<".txt">> -> rewrite_content_type(Path, <<"text/plain">>, Req2);
-    <<".json">> -> rewrite_content_type(Path, <<"application/json">>, Req2);
-    <<".jsonp">> -> rewrite_content_type(Path, <<"application/javascript">>, Req2);
-    <<".xml">> -> rewrite_content_type(Path, <<"application/xml">>, Req2);
-    <<".yaml">> -> rewrite_content_type(Path, <<"application/x-yaml">>, Req2);
-    <<".edn">> -> rewrite_content_type(Path, <<"application/x-edn">>, Req2);
+    <<".txt">> -> rewrite_accept(Path, <<"text/plain">>, Req2);
+    <<".json">> -> rewrite_accept(Path, <<"application/json">>, Req2);
+    <<".jsonp">> -> rewrite_accept(Path, <<"application/javascript">>, Req2);
+    <<".xml">> -> rewrite_accept(Path, <<"application/xml">>, Req2);
+    <<".yaml">> -> rewrite_accept(Path, <<"application/x-yaml">>, Req2);
+    <<".edn">> -> rewrite_accept(Path, <<"application/x-edn">>, Req2);
     _ -> Req2
   end.
 
 % Private
 
--spec rewrite_content_type(binary(), binary(), cowboy_req:req()) -> cowboy_req:req().
-rewrite_content_type(Path, ContentType, Req) ->
+-spec rewrite_accept(binary(), binary(), cowboy_req:req()) -> cowboy_req:req().
+rewrite_accept(Path, ContentType, Req) ->
   Path2 = {path, filename:rootname(Path)},
   Headers = cowboy_req:get(headers, Req),
-  Headers2 = case lists:keyfind(<<"content-type">>, 1, Headers) of
-    {<<"content-type">>, _Type} -> lists:keyreplace(<<"content-type">>, 1, Headers, {<<"content-type">>, ContentType});
-    false -> [{<<"content-type">>, ContentType} | Headers]
+  Headers2 = case lists:keyfind(<<"accept">>, 1, Headers) of
+    {<<"accept">>, _Type} -> lists:keyreplace(<<"accept">>, 1, Headers, {<<"accept">>, ContentType});
+    false -> [{<<"accept">>, ContentType} | Headers]
   end,
   Headers3 = {headers, Headers2},
   cowboy_req:set([Path2, Headers3], Req).

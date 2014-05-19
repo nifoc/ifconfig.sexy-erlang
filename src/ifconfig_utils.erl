@@ -55,7 +55,7 @@ peer_ip(Req) ->
 
 -spec format(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()} | {{error, term()}, cowboy_req:req()}.
 format(Field, Value, Req) ->
-  case cowboy_req:header(<<"content-type">>, Req, undefined) of
+  case cowboy_req:header(<<"accept">>, Req, <<"text/plain">>) of
     {<<"text/plain", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"text/html", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"application/xhtml+xml", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
@@ -64,7 +64,6 @@ format(Field, Value, Req) ->
     {<<"application/xml", _Rest/binary>>, Req2} -> format_xml(Field, Value, Req2);
     {<<"application/x-yaml", _Rest/binary>>, Req2} -> format_yaml(Field, Value, Req2);
     {<<"application/x-edn", _Rest/binary>>, Req2} -> format_edn(Field, Value, Req2);
-    {undefined, Req2} -> format_txt(Value, Req2);
     {_Type, Req2} -> {{error, unknown_content_type}, Req2}
   end.
 

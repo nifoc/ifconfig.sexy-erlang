@@ -26,7 +26,7 @@ request(Req) ->
     <<".jsonp">> -> rewrite_content_type(Path, <<"application/javascript">>, Req2);
     <<".xml">> -> rewrite_content_type(Path, <<"application/xml">>, Req2);
     <<".yaml">> -> rewrite_content_type(Path, <<"application/x-yaml">>, Req2);
-    <<".edn">> -> rewrite_content_type(Path, <<"application/edn">>, Req2);
+    <<".edn">> -> rewrite_content_type(Path, <<"application/x-edn">>, Req2);
     _ -> Req2
   end.
 

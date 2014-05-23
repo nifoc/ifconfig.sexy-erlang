@@ -64,6 +64,7 @@ format(Field, Value, Req) ->
     {<<"application/xml", _Rest/binary>>, Req2} -> format_xml(Field, Value, Req2);
     {<<"application/x-yaml", _Rest/binary>>, Req2} -> format_yaml(Field, Value, Req2);
     {<<"application/x-edn", _Rest/binary>>, Req2} -> format_edn(Field, Value, Req2);
+    {<<"text/x-ascii-art", _Rest/binary>>, Req2} -> format_ascii(Field, Value, Req2);
     {_Type, Req2} -> {{error, unknown_content_type}, Req2}
   end.
 
@@ -101,3 +102,8 @@ format_yaml(Field, Value, Req) ->
 format_edn(Field, Value, Req) ->
   Body = <<"{:", Field/binary, " \"", Value/binary, "\"}">>,
   {ok, [{<<"content-type">>, <<"application/edn; charset=utf-8">>}], Body, Req}.
+
+-spec format_ascii(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
+format_ascii(<<"ip">>, Value, Req) ->
+  Body = ifconfig_ascii:ip(Value),
+  {ok, [{<<"content-type">>, <<"text/plain; charset=utf-8">>}], Body, Req}.

@@ -56,6 +56,7 @@ peer_ip(Req) ->
 -spec format(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()} | {{error, term()}, cowboy_req:req()}.
 format(Field, Value, Req) ->
   case cowboy_req:header(<<"accept">>, Req, <<"text/plain">>) of
+    {<<"*/*", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"text/plain", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"text/html", _Rest/binary>>, Req2} -> format_txt(Value, Req2);
     {<<"application/xhtml+xml", _Rest/binary>>, Req2} -> format_txt(Value, Req2);

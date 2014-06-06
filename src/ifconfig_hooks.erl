@@ -27,6 +27,7 @@ request(Req) ->
     <<".xml">> -> rewrite_accept(Path, <<"application/xml">>, Req2);
     <<".yaml">> -> rewrite_accept(Path, <<"application/x-yaml">>, Req2);
     <<".edn">> -> rewrite_accept(Path, <<"application/x-edn">>, Req2);
+    <<".dson">> -> rewrite_accept(Path, <<"application/x-dson">>, Req2);
     <<".ascii">> -> rewrite_accept(Path, <<"text/x-ascii-art">>, Req2);
     _ -> Req2
   end.

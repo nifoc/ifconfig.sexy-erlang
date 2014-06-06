@@ -78,13 +78,13 @@ format_txt(Value, Req) ->
 
 -spec format_json(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_json(Field, Value, Req) ->
-  Body = <<"{\"", Field/binary, "\":\"", Value/binary, "\"}">>,
+  Body = <<"{\"", Field/binary, "\":\"", Value/binary, "\"}\n">>,
   {ok, [{<<"content-type">>, <<"application/json; charset=utf-8">>}], Body, Req}.
 
 -spec format_jsonp(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_jsonp(Field, Value, Req) ->
   {Fn, Req2} = cowboy_req:qs_val(<<"callback">>, Req, <<"ifconfig">>),
-  Body = <<Fn/binary, "({\"", Field/binary, "\":\"", Value/binary, "\"});">>,
+  Body = <<Fn/binary, "({\"", Field/binary, "\":\"", Value/binary, "\"});\n">>,
   {ok, [{<<"content-type">>, <<"application/javascript; charset=utf-8">>}], Body, Req2}.
 
 -spec format_xml(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
@@ -92,25 +92,26 @@ format_xml(Field, Value, Req) ->
   Body = <<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
             "<ifconfig>",
               "<", Field/binary, ">", Value/binary, "</", Field/binary, ">"
-            "</ifconfig>">>,
+            "</ifconfig>\n">>,
   {ok, [{<<"content-type">>, <<"application/xml; charset=utf-8">>}], Body, Req}.
 
 -spec format_yaml(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_yaml(Field, Value, Req) ->
-  Body = <<"---\n", Field/binary, ": ", Value/binary>>,
+  Body = <<"---\n", Field/binary, ": ", Value/binary, "\n">>,
   {ok, [{<<"content-type">>, <<"application/x-yaml; charset=utf-8">>}], Body, Req}.
 
 -spec format_edn(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_edn(Field, Value, Req) ->
-  Body = <<"{:", Field/binary, " \"", Value/binary, "\"}">>,
+  Body = <<"{:", Field/binary, " \"", Value/binary, "\"}\n">>,
   {ok, [{<<"content-type">>, <<"application/edn; charset=utf-8">>}], Body, Req}.
 
 -spec format_dson(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_dson(Field, Value, Req) ->
-  Body = <<"such \"", Field/binary, "\" is \"", Value/binary, "\" wow">>,
+  Body = <<"such \"", Field/binary, "\" is \"", Value/binary, "\" wow\n">>,
   {ok, [{<<"content-type">>, <<"application/x-dson; charset=utf-8">>}], Body, Req}.
 
 -spec format_ascii(binary(), binary(), cowboy_req:req()) -> {ok, [{binary(), binary()}], binary(), cowboy_req:req()}.
 format_ascii(<<"ip">>, Value, Req) ->
   Body = ifconfig_ascii:ip(Value),
-  {ok, [{<<"content-type">>, <<"text/plain; charset=utf-8">>}], Body, Req}.
+  Body2 = <<Body/binary, "\n">>,
+  {ok, [{<<"content-type">>, <<"text/plain; charset=utf-8">>}], Body2, Req}.
